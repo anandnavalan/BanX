@@ -15,7 +15,7 @@ public class ResponseHandler {
 		map.put("statusCode", status.value());
 		map.put("status", status);
 
-		return new ResponseEntity<>(map, status);
+		return new ResponseEntity<Object>(map, status);
 	}
 
 	public static ResponseEntity<Object> generateResponse(String message, HttpStatus status) {
@@ -25,6 +25,6 @@ public class ResponseHandler {
 		map.put("statusCode", status.value());
 		map.put("status", status);
 
-		return new ResponseEntity<>(map, status);
+		return new ResponseEntity<Object>(map, status);
 	}
 }

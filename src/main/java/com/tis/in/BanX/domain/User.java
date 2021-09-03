@@ -2,8 +2,12 @@ package com.tis.in.BanX.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
 
@@ -13,29 +17,36 @@ public class User {
 
 	@Id
 	@Column(name = "user_id")
-	private Integer userId;
-	
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long userId;
+
 	@Column(name = "user_name")
+	@NotBlank(message = "UserName is mandatory")
+	@Size(min = 6, max = 50,message = "UserName should be minimum of 6 chars and maximum of 50 chars")
 	private String userName;
-	
+
 	@Column(name = "user_password")
+	@NotBlank(message = "UserPassword is mandatory")
+	@Size(min = 8, max = 50, message = "Userpassword should be minimum of 8 chars and maximum of 50 chars")
 	private String userPassword;
-	
+
 	@Column(name = "user_type")
 	private Integer userType;
-	
+
 	@Column(name = "user_email")
+	@NotBlank(message = "UserEmail is mandatory")
 	@Email(message = "Email should be valid")
 	private String userEmail;
-	
+
 	@Column(name = "user_mobile")
+	@NotBlank(message = "UserMobile is mandatory")
 	private String userMobile;
 
-	public Integer getUserId() {
+	public long getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Integer userId) {
+	public void setUserId(long userId) {
 		this.userId = userId;
 	}
 

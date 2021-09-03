@@ -15,24 +15,20 @@ public class UserTypeService {
 	@Autowired
 	UserTypeRepository userTypeRepository;
 
-	public UserType addUserType(UserType userType) {
+	public UserType addOrUpdateUserType(UserType userType) {
 		return userTypeRepository.save(userType);
 	}
 
-	public UserType updateUserType(UserType userType) {
-		return userTypeRepository.save(userType);
-	}
-	
 	public List<UserType> getAllUserTypes() {
 		return userTypeRepository.findAll();
 	}
 
-	public Optional<UserType>  getUserType(long id) {
+	public Optional<UserType> getUserType(long id) {
 		Optional<UserType> userType = userTypeRepository.findByUserTypeId(id);
 		return userType;
 	}
-	
-	public Optional<UserType> getUserTypeByName(String name) {
+
+	public Optional<UserType> getUserType(String name) {
 		return userTypeRepository.findByUserTypeName(name);
 	}
 

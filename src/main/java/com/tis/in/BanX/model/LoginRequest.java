@@ -1,10 +1,15 @@
 package com.tis.in.BanX.model;
 
+import javax.validation.constraints.NotBlank;
+
 public class LoginRequest {
 	
+	@NotBlank(message = "UserName is Mandatory")
 	private String userName;
 	
+	@NotBlank(message = "Password is Mandatory")
 	private String password;
+	
 	public String getUserName() {
 		return userName;
 	}
