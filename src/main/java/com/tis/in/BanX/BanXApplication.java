@@ -1,4 +1,3 @@
-
 package com.tis.in.BanX;
 
 import org.springframework.boot.SpringApplication;
