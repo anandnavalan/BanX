@@ -15,20 +15,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tis.in.BanX.domain.AdminUser;
-import com.tis.in.BanX.domain.StaffUser;
 import com.tis.in.BanX.handler.ResponseHandler;
 import com.tis.in.BanX.service.AdminUserService;
 
 @RestController
 public class AdminUserController {
+
 	@Autowired
 	AdminUserService adminUserService;
 
 	@RequestMapping(value = "/createadminuser", name = "createadminuser", method = RequestMethod.POST)
 	private ResponseEntity<Object> createAdminUser(@RequestBody @Valid AdminUser adminuser) {
 
-		// Optional<AdminUser> adminUser =
-		// AdminUserService.getAdminUser(adminuser.getAdminId());
 		Optional<AdminUser> adminUser = adminUserService.getAdminUser(adminuser.getAdminId());
 		if (adminUser.isPresent()) {
 			return ResponseHandler.generateResponse("Admin already exists in our system", HttpStatus.CONFLICT);

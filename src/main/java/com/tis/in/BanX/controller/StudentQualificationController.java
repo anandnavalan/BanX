@@ -47,10 +47,10 @@ public class StudentQualificationController {
 	@RequestMapping(value = "/updatestudentqualification", name = "updateStudentQualification", method = RequestMethod.PUT)
 	private ResponseEntity<Object> updateStudentQualification(
 			@RequestBody @Valid StudentQualification studentqualification) {
-		
+
 		Optional<StudentQualification> optionalStudentQualification = studentQualificationService
 				.getStudentQualification(studentqualification.getStudentId());
-		
+
 		if (optionalStudentQualification.isPresent()) {
 			return ResponseHandler.generateResponse("StudentQualification not exists in our system",
 					HttpStatus.NOT_FOUND);
@@ -62,11 +62,13 @@ public class StudentQualificationController {
 					createStudentQualification);
 		}
 	}
+
 	@RequestMapping(value = "/getstudentqualification", name = "getStudentQualification", method = RequestMethod.GET)
-	public ResponseEntity<Object> getStudentUser() {
+	public ResponseEntity<Object> getStudentQualification() {
 
 		List<StudentQualification> studentQualification = studentQualificationService.getAllStudentQualification();
-		return ResponseHandler.generateResponse("StudentsQualification Retrieved Successfully", HttpStatus.OK, studentQualification);
+		return ResponseHandler.generateResponse("StudentsQualification Retrieved Successfully", HttpStatus.OK,
+				studentQualification);
 	}
 
 }

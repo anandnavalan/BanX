@@ -38,8 +38,6 @@ public class StudentController {
 			studentUser = studentService.addOrUpdateStudentUser(studentUser);
 			return ResponseHandler.generateResponse("Student Created Successfully", HttpStatus.CREATED, studentUser);
 			
-		
-
 		}
 
 	}
@@ -48,24 +46,21 @@ public class StudentController {
 	private ResponseEntity<Object> updateUser(@RequestBody @Valid StudentUser studentUser) {
 		Optional<StudentUser> optionalStudentUser = studentService.getStudentUser(studentUser.getStudentId());
 		if (optionalStudentUser.isPresent()) {
-			return ResponseHandler.generateResponse("Student not existing in your system", HttpStatus.NOT_FOUND);
+			return ResponseHandler.generateResponse("Student not exists in your system", HttpStatus.NOT_FOUND);
 			
 		}
 		else {
 			studentUser = studentService.addOrUpdateStudentUser(studentUser);
 			return ResponseHandler.generateResponse("Student Updated Successfully", HttpStatus.OK, studentUser);
 			
-		
-
 		}
 	}
 		
 
 	@RequestMapping(value = "/getstudentuser", name = "getStudentUser", method = RequestMethod.GET)
 	public ResponseEntity<Object> getStudentUser() {
-
-		List<StudentUser> studentUser = studentService.getAllStudentUser();
-		return ResponseHandler.generateResponse("Students Retrieved Successfully", HttpStatus.OK, studentUser);
+		List<StudentUser> studentUsers = studentService.getAllStudentUser();
+		return ResponseHandler.generateResponse("Students Retrieved Successfully", HttpStatus.OK, studentUsers);
 	}
 
 	@GetMapping(value = "/getstudentuser/{id}", name = "getidStudentUser")
