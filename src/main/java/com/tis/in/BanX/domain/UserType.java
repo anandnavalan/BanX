@@ -1,6 +1,7 @@
 package com.tis.in.BanX.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,14 +19,17 @@ public class UserType {
 	private long userTypeId;
 
 	@Column(name = "user_type_name")
-	@NotBlank(message = "UserType is mandatory")
+	@NotBlank(message = "USERTYPE_NAME_NOT_BLANK")
 	private String userTypeName;
 
+	@Embedded
+	private AuditInfo auditInfo;
+	
 	public long getUserTypeId() {
 		return userTypeId;
 	}
 
-	public void setUserTypeId(Integer userTypeId) {
+	public void setUserTypeId(long userTypeId) {
 		this.userTypeId = userTypeId;
 	}
 
@@ -37,4 +41,12 @@ public class UserType {
 		this.userTypeName = userTypeName;
 	}
 
+	public AuditInfo getAuditInfo() {
+		return auditInfo;
+	}
+
+	public void setAuditInfo(AuditInfo auditInfo) {
+		this.auditInfo = auditInfo;
+	}
+	
 }

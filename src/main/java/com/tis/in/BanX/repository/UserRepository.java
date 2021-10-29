@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.tis.in.BanX.domain.User;
-import com.tis.in.BanX.domain.UserType;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByUserId(long id);
