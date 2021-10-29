@@ -3,6 +3,7 @@ package com.tis.in.BanX.domain;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -81,6 +82,9 @@ public class StudentUser {
 	@Column(name = "student_notes")
 	private String studentNotes;
 
+	@Embedded
+	private AuditInfo auditInfo;
+	
 	public long getStudentId() {
 		return studentId;
 	}
@@ -223,6 +227,15 @@ public class StudentUser {
 
 	public void setStudentNotes(String studentNotes) {
 		this.studentNotes = studentNotes;
+	}
+	
+
+	public AuditInfo getAuditInfo() {
+		return auditInfo;
+	}
+
+	public void setAuditInfo(AuditInfo auditInfo) {
+		this.auditInfo = auditInfo;
 	}
 
 }

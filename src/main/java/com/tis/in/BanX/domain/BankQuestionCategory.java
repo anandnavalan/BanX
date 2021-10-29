@@ -20,7 +20,7 @@ public class BankQuestionCategory {
 	private long bankExamId;
 
 	@Column(name = "question_category_id")
-	private long QuestionCategoryId;
+	private long questionCategoryId;
 
 	@Column(name = "bank_question_correct_answer_score")
 	private float bankQuestionCorrectAnswerScore;
@@ -48,11 +48,11 @@ public class BankQuestionCategory {
 	}
 
 	public long getQuestionCategoryId() {
-		return QuestionCategoryId;
+		return questionCategoryId;
 	}
 
-	public void setQuestionCategoryId(long questionCategoryId) {
-		QuestionCategoryId = questionCategoryId;
+	public void setQuestionCategoryId(int questionCategoryId) {
+		this.questionCategoryId = questionCategoryId;
 	}
 
 	public float getBankQuestionCorrectAnswerScore() {

@@ -15,7 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tis.in.BanX.common.CommonMessageConstants;
+import com.tis.in.BanX.common.ErrorConstants;
+import com.tis.in.BanX.common.ResponseBuilder;
+import com.tis.in.BanX.common.Utility;
+import com.tis.in.BanX.domain.AuditInfo;
 import com.tis.in.BanX.domain.BankExam;
+import com.tis.in.BanX.exception.model.ResourceCreationException;
+import com.tis.in.BanX.exception.model.ResourceNotFoundException;
 import com.tis.in.BanX.handler.ResponseHandler;
 import com.tis.in.BanX.service.BankExamService;
 
@@ -26,33 +33,57 @@ public class BankExamController {
 	BankExamService bankExamService;
 
 	@RequestMapping(value = "/createbankExam", name = "createBankExam", method = RequestMethod.POST)
-	private ResponseEntity<Object> createBankExam(@RequestBody @Valid BankExam bankExam) {
+	private ResponseEntity<ResponseBuilder> createBankExam(@RequestBody @Valid BankExam bankExam)
+			throws ResourceCreationException {
 		Optional<BankExam> optionalBankExam = bankExamService.getBankExam(bankExam.getBankExamName());
 		if (optionalBankExam.isPresent()) {
-			return ResponseHandler.generateResponse("BankExam already exists in our system", HttpStatus.CONFLICT);
-
+			throw new ResourceCreationException(ErrorConstants.ERROR_BANKEXAM_EXISTS);
 		} else {
-			bankExam = bankExamService.addOrUpdateBankExam(bankExam);
-			return ResponseHandler.generateResponse("BankExam created successfully", HttpStatus.CREATED, bankExam);
+			AuditInfo auditInfo = new AuditInfo();
+
+			auditInfo.setCreatedBy("system");
+			auditInfo.setCreatedDate(Utility.getSQLDate());
+			auditInfo.setModifiedBy("system");
+			auditInfo.setModifiedDate(Utility.getSQLDate());
+
+			bankExam.setAuditInfo(auditInfo);
+
+			BankExam createBankExam = bankExamService.addOrUpdateBankExam(bankExam);
+
+			ResponseBuilder builder = Utility.responseBuilder(
+					Utility.getLocalizedMessage(CommonMessageConstants.SUCCESS_BANK_EXAM_CREATION),
+					HttpStatus.CREATED.value());
+
+			return new ResponseEntity<>(builder, HttpStatus.CREATED);
 
 		}
 
 	}
 
 	@RequestMapping(value = "/updatebankexam", name = "updateBankExam", method = RequestMethod.PUT)
-	private ResponseEntity<Object> updateBankExam(@RequestBody @Valid BankExam bankExam) {
+	private ResponseEntity<ResponseBuilder> updateBankExam(@RequestBody @Valid BankExam bankExam)
+			throws ResourceNotFoundException {
 		Optional<BankExam> optionalBankExam = bankExamService.getBankExam(bankExam.getBankExamId());
 		if (optionalBankExam.isPresent()) {
-			return ResponseHandler.generateResponse("BankExam not existing in our system", HttpStatus.NOT_FOUND);
+			AuditInfo auditInfo = new AuditInfo();
+			auditInfo.setModifiedBy("system");
+			auditInfo.setModifiedDate(Utility.getSQLDate());
+
+			bankExam.setAuditInfo(auditInfo);
+
+			bankExam = bankExamService.addOrUpdateBankExam(bankExam);
+			ResponseBuilder builder = Utility.responseBuilder(
+					Utility.getLocalizedMessage(CommonMessageConstants.SUCCESS_BANK_EXAM_UPDATION),
+					HttpStatus.CREATED.value());
+
+			return new ResponseEntity<>(builder, HttpStatus.CREATED);
 
 		} else {
-			bankExam = bankExamService.addOrUpdateBankExam(bankExam);
-			return ResponseHandler.generateResponse("BankExam updated successfully", HttpStatus.OK, bankExam);
-
+			throw new ResourceNotFoundException(ErrorConstants.ERROR_BANKEXAM_NOT_EXISTS);
 		}
 	}
 
-	@RequestMapping(value = "/getbankexam", name = "getBankExams", method = RequestMethod.GET)
+	@RequestMapping(value = "/getbankexams", name = "getBankExams", method = RequestMethod.GET)
 	public ResponseEntity<Object> getBankExam() {
 
 		List<BankExam> bankExams = bankExamService.getAllBankExam();

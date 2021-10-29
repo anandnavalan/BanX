@@ -15,7 +15,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tis.in.BanX.common.CommonMessageConstants;
+import com.tis.in.BanX.common.ErrorConstants;
+import com.tis.in.BanX.common.ResponseBuilder;
+import com.tis.in.BanX.common.Utility;
+import com.tis.in.BanX.domain.AuditInfo;
 import com.tis.in.BanX.domain.User;
+import com.tis.in.BanX.domain.UserType;
+import com.tis.in.BanX.exception.model.ResourceCreationException;
+import com.tis.in.BanX.exception.model.ResourceNotFoundException;
 import com.tis.in.BanX.handler.ResponseHandler;
 import com.tis.in.BanX.service.UserService;
 
@@ -25,44 +33,67 @@ public class UserController {
 	UserService userService;
 
 	@RequestMapping(value = "/createuser", name = "createUser", method = RequestMethod.POST)
-	private ResponseEntity<Object> createUser(@RequestBody @Valid User user) {
+	private ResponseEntity<ResponseBuilder> createUser(@RequestBody @Valid User user) throws ResourceCreationException {
 
 		Optional<User> optionalUser = userService.getUser(user.getUserName());
 
 		if (optionalUser.isPresent()) {
-			return ResponseHandler.generateResponse("Username already exists in our system", HttpStatus.CONFLICT);
+			throw new ResourceCreationException(ErrorConstants.ERROR_USER_EXISTS);
 		} else {
 
+			AuditInfo auditInfo = new AuditInfo();
+
+			auditInfo.setCreatedBy("system");
+			auditInfo.setCreatedDate(Utility.getSQLDate());
+			auditInfo.setModifiedBy("system");
+			auditInfo.setModifiedDate(Utility.getSQLDate());
+
+			user.setAuditInfo(auditInfo);
+
 			User createUser = userService.addOrUpdateUser(user);
-			return ResponseHandler.generateResponse("User Created Successfully", HttpStatus.CREATED, createUser);
+
+			ResponseBuilder builder = Utility.responseBuilder(
+					Utility.getLocalizedMessage(CommonMessageConstants.SUCCESS_USER_CREATION),
+					HttpStatus.CREATED.value());
+
+			return new ResponseEntity<>(builder, HttpStatus.CREATED);
 		}
 	}
 
 	@RequestMapping(value = "/updateuser", name = "updateUser", method = RequestMethod.PUT)
-	private ResponseEntity<Object> updateUser(@RequestBody @Valid User user) {
+	private ResponseEntity<ResponseBuilder> updateUser(@RequestBody @Valid User user) throws ResourceNotFoundException {
 
 		Optional<User> optionalUser = userService.getUser(user.getUserId());
 
 		if (optionalUser.isPresent()) {
-			return ResponseHandler.generateResponse("User not exists in our system", HttpStatus.NOT_FOUND);
+			AuditInfo auditInfo = new AuditInfo();
+			auditInfo.setModifiedBy("system");
+			auditInfo.setModifiedDate(Utility.getSQLDate());
+
+			user.setAuditInfo(auditInfo);
+
+			user = userService.addOrUpdateUser(user);
+			ResponseBuilder builder = Utility.responseBuilder(
+					Utility.getLocalizedMessage(CommonMessageConstants.SUCCESS_USER_UPDATION),
+					HttpStatus.CREATED.value());
+
+			return new ResponseEntity<>(builder, HttpStatus.CREATED);
 
 		} else {
-			user = userService.addOrUpdateUser(user);
-			return ResponseHandler.generateResponse("User updated Successfully", HttpStatus.OK, optionalUser);
+			throw new ResourceNotFoundException(ErrorConstants.ERROR_USER_NOT_EXISTS);
 		}
 	}
 
-	@RequestMapping(value = "/getuser", name = "getUser", method = RequestMethod.GET)
+	@RequestMapping(value = "/getusers", name = "getUser", method = RequestMethod.GET)
 	public ResponseEntity<List<User>> getUser() {
-
-		List<User> User = userService.getAllUser();
-		return new ResponseEntity<>(User, HttpStatus.OK);
+		List<User> users = userService.getAllUser();
+		return ResponseEntity.status(HttpStatus.OK).body(users);
 	}
 
 	@GetMapping(value = "/getuser/{id}", name = "getIdUser")
 	public ResponseEntity<User> getidUserbyid(@PathVariable long id) {
 		Optional<User> user = userService.getUser(id);
-		return new ResponseEntity<>(user.get(), HttpStatus.OK);
+		return ResponseEntity.status(HttpStatus.OK).body(user.get());
 	}
 
 }

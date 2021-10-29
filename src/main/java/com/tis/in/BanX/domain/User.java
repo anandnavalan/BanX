@@ -1,11 +1,13 @@
 package com.tis.in.BanX.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 @Entity
@@ -18,25 +20,28 @@ public class User {
 	private Long userId;
 
 	@Column(name = "user_name")
-	@NotBlank(message = "UserName is mandatory")
+	@NotBlank(message = "USER_NAME_NOT_BLANK")
 	private String userName;
 
 	@Column(name = "user_password")
-	@NotBlank(message = "UserPassword is mandatory")
+	@NotBlank(message = "USER_PASSWORD_NOT_BLANK")
 	private String userPassword;
 
 	@Column(name = "user_type")
-	@NotBlank(message = "UserType is mandatory")
+	@Min(value = 1, message = "USER_TYPE_NOT_BLANK")
 	private Integer userType;
 
 	@Column(name = "user_email")
-	@NotBlank(message = "UserEmail is mandatory")
+	@NotBlank(message = "USER_EMAIL_NOT_BLANK")
 	private String userEmail;
 
 	@Column(name = "user_mobile")
-	@NotBlank(message = "UserMobile is mandatory")
+	@NotBlank(message = "USER_MOBILE_NOT_BLANK")
 	private String userMobile;
 
+	@Embedded
+	private AuditInfo auditInfo;
+	
 	public Long getUserId() {
 		return userId;
 	}
@@ -85,4 +90,11 @@ public class User {
 		this.userMobile = userMobile;
 	}
 
+	public AuditInfo getAuditInfo() {
+		return auditInfo;
+	}
+
+	public void setAuditInfo(AuditInfo auditInfo) {
+		this.auditInfo = auditInfo;
+	}
 }

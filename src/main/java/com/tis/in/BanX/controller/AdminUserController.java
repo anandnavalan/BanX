@@ -24,7 +24,7 @@ public class AdminUserController {
 	@Autowired
 	AdminUserService adminUserService;
 
-	@RequestMapping(value = "/createadminuser", name = "createadminuser", method = RequestMethod.POST)
+	@RequestMapping(value = "/createadminuser", name = "createAdminUser", method = RequestMethod.POST)
 	private ResponseEntity<Object> createAdminUser(@RequestBody @Valid AdminUser adminuser) {
 
 		Optional<AdminUser> adminUser = adminUserService.getAdminUser(adminuser.getAdminId());
@@ -51,10 +51,10 @@ public class AdminUserController {
 
 	}
 
-	@RequestMapping(value = "/getadminuser", name = "getAdminUser", method = RequestMethod.GET)
+	@RequestMapping(value = "/getadminusers", name = "getAdminUsers", method = RequestMethod.GET)
 	private ResponseEntity<Object> getAdminUser() {
-		List<AdminUser> adminusers = adminUserService.getAllAdminUser();
-		return ResponseHandler.generateResponse("Admin Retrieved Successfullty", HttpStatus.OK, adminusers);
+		List<AdminUser> adminUsers = adminUserService.getAllAdminUser();
+		return ResponseHandler.generateResponse("Admin Retrieved Successfullty", HttpStatus.OK, adminUsers);
 	}
 
 	@RequestMapping(value = "/getadminuser/{id}", name = "getAdminId", method = RequestMethod.GET)
