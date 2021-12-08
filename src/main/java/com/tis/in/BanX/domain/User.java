@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "q_user")
@@ -21,10 +22,12 @@ public class User {
 
 	@Column(name = "user_name")
 	@NotBlank(message = "USER_NAME_NOT_BLANK")
+	@Size(min = 2, max = 255, message = "USER_NAME_SIZE_CRITERIA_ERROR")
 	private String userName;
 
 	@Column(name = "user_password")
 	@NotBlank(message = "USER_PASSWORD_NOT_BLANK")
+	@Size(min = 2, max = 255, message = "USER_PASSWORD_SIZE_CRITERIA_ERROR")
 	private String userPassword;
 
 	@Column(name = "user_type")
@@ -33,15 +36,17 @@ public class User {
 
 	@Column(name = "user_email")
 	@NotBlank(message = "USER_EMAIL_NOT_BLANK")
+	@Size(min = 2, max = 255, message = "USER_EMAIL_SIZE_CRITERIA_ERROR")
 	private String userEmail;
 
 	@Column(name = "user_mobile")
 	@NotBlank(message = "USER_MOBILE_NOT_BLANK")
+
 	private String userMobile;
 
 	@Embedded
 	private AuditInfo auditInfo;
-	
+
 	public Long getUserId() {
 		return userId;
 	}

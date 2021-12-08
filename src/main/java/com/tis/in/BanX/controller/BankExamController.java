@@ -32,12 +32,12 @@ public class BankExamController {
 	@Autowired
 	BankExamService bankExamService;
 
-	@RequestMapping(value = "/createbankExam", name = "createBankExam", method = RequestMethod.POST)
+	@RequestMapping(value = "/createbankexam", name = "CreateBankExam", method = RequestMethod.POST)
 	private ResponseEntity<ResponseBuilder> createBankExam(@RequestBody @Valid BankExam bankExam)
 			throws ResourceCreationException {
 		Optional<BankExam> optionalBankExam = bankExamService.getBankExam(bankExam.getBankExamName());
 		if (optionalBankExam.isPresent()) {
-			throw new ResourceCreationException(ErrorConstants.ERROR_BANKEXAM_EXISTS);
+			throw new ResourceCreationException(ErrorConstants.ERROR_BANK_EXAM_EXISTS);
 		} else {
 			AuditInfo auditInfo = new AuditInfo();
 
@@ -60,32 +60,40 @@ public class BankExamController {
 
 	}
 
-	@RequestMapping(value = "/updatebankexam", name = "updateBankExam", method = RequestMethod.PUT)
+	@RequestMapping(value = "/updatebankexam", name = "UpdateBankExam", method = RequestMethod.PUT)
 	private ResponseEntity<ResponseBuilder> updateBankExam(@RequestBody @Valid BankExam bankExam)
-			throws ResourceNotFoundException {
-		Optional<BankExam> optionalBankExam = bankExamService.getBankExam(bankExam.getBankExamId());
-		if (optionalBankExam.isPresent()) {
-			AuditInfo auditInfo = new AuditInfo();
-			auditInfo.setModifiedBy("system");
-			auditInfo.setModifiedDate(Utility.getSQLDate());
+			throws ResourceNotFoundException, ResourceCreationException {
+		Optional<BankExam> optionalBankExamId = bankExamService.getBankExam(bankExam.getBankExamId());
+		if (optionalBankExamId.isPresent()) {
 
-			bankExam.setAuditInfo(auditInfo);
+			Optional<BankExam> optionalBankExam = bankExamService.getBankExam(bankExam.getBankExamName());
 
-			bankExam = bankExamService.addOrUpdateBankExam(bankExam);
-			ResponseBuilder builder = Utility.responseBuilder(
-					Utility.getLocalizedMessage(CommonMessageConstants.SUCCESS_BANK_EXAM_UPDATION),
-					HttpStatus.CREATED.value());
+			if (optionalBankExam.isPresent()) {
+				throw new ResourceCreationException(ErrorConstants.ERROR_BANK_EXAM_EXISTS);
+			} else {
+				AuditInfo auditInfo = new AuditInfo();
+				auditInfo.setCreatedBy("system");
+				auditInfo.setCreatedDate(Utility.getSQLDate());
+				auditInfo.setModifiedBy("system");
+				auditInfo.setModifiedDate(Utility.getSQLDate());
 
-			return new ResponseEntity<>(builder, HttpStatus.CREATED);
+				bankExam.setAuditInfo(auditInfo);
+
+				bankExam = bankExamService.addOrUpdateBankExam(bankExam);
+				ResponseBuilder builder = Utility.responseBuilder(
+						Utility.getLocalizedMessage(CommonMessageConstants.SUCCESS_BANK_EXAM_UPDATION),
+						HttpStatus.CREATED.value());
+
+				return new ResponseEntity<>(builder, HttpStatus.CREATED);
+			}
 
 		} else {
-			throw new ResourceNotFoundException(ErrorConstants.ERROR_BANKEXAM_NOT_EXISTS);
+			throw new ResourceNotFoundException(ErrorConstants.ERROR_BANK_EXAM_NOT_EXISTS);
 		}
 	}
 
 	@RequestMapping(value = "/getbankexams", name = "getBankExams", method = RequestMethod.GET)
 	public ResponseEntity<Object> getBankExam() {
-
 		List<BankExam> bankExams = bankExamService.getAllBankExam();
 		return ResponseHandler.generateResponse("BankExam Retrieved Successfully", HttpStatus.OK, bankExams);
 	}
@@ -93,6 +101,6 @@ public class BankExamController {
 	@GetMapping(value = "/getbankexam/{id}", name = "getBankExam")
 	public ResponseEntity<Object> getidBankExambyid(@PathVariable long id) {
 		Optional<BankExam> bankExam = bankExamService.getBankExam(id);
-		return ResponseHandler.generateResponse("BankExams Retrieved Successfully", HttpStatus.OK, bankExam.get());
+		return ResponseHandler.generateResponse("BankExam Retrieved Successfully", HttpStatus.OK, bankExam.get());
 	}
 }

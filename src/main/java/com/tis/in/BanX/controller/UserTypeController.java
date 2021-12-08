@@ -41,14 +41,6 @@ public class UserTypeController {
 		if (optionalUserType.isPresent()) {
 			throw new ResourceCreationException(ErrorConstants.ERROR_USER_TYPE_EXISTS);
 		} else {
-			AuditInfo auditInfo = new AuditInfo();
-
-			auditInfo.setCreatedBy("system");
-			auditInfo.setCreatedDate(Utility.getSQLDate());
-			auditInfo.setModifiedBy("system");
-			auditInfo.setModifiedDate(Utility.getSQLDate());
-
-			userType.setAuditInfo(auditInfo);
 			UserType createUserType = userTypeService.addOrUpdateUserType(userType);
 
 			ResponseBuilder builder = Utility.responseBuilder(
@@ -60,25 +52,28 @@ public class UserTypeController {
 
 	}
 
-	@RequestMapping(value = "/updateusertype", name = "updateUserType", method = RequestMethod.PUT)
+	@RequestMapping(value = "/updateusertype", name = "UpdateUserType", method = RequestMethod.PUT)
 	private ResponseEntity<ResponseBuilder> updateUserType(@RequestBody @Valid UserType userType)
-			throws ResourceNotFoundException {
+			throws ResourceNotFoundException, ResourceCreationException {
 		
 		Optional<UserType> optionalUserType = userTypeService.getUserType(userType.getUserTypeId());
 
 		if (optionalUserType.isPresent()) {
-			AuditInfo auditInfo = new AuditInfo();
-			auditInfo.setModifiedBy("system");
-			auditInfo.setModifiedDate(Utility.getSQLDate());
+			
+			optionalUserType = userTypeService.getUserType(userType.getUserTypeName());
+			
+			if (optionalUserType.isPresent()) {
+				throw new ResourceCreationException(ErrorConstants.ERROR_USER_TYPE_EXISTS);
+			} else {
+				userType = userTypeService.addOrUpdateUserType(userType);
 
-			userType.setAuditInfo(auditInfo);
-			userType = userTypeService.addOrUpdateUserType(userType);
+				ResponseBuilder builder = Utility.responseBuilder(
+						Utility.getLocalizedMessage(CommonMessageConstants.SUCCESS_USER_TYPE_UPDATION),
+						HttpStatus.CREATED.value());
 
-			ResponseBuilder builder = Utility.responseBuilder(
-					Utility.getLocalizedMessage(CommonMessageConstants.SUCCESS_USER_TYPE_UPDATION),
-					HttpStatus.CREATED.value());
+				return new ResponseEntity<>(builder, HttpStatus.CREATED);				
+			}
 
-			return new ResponseEntity<>(builder, HttpStatus.CREATED);
 		} else {
 			throw new ResourceNotFoundException(ErrorConstants.ERROR_USER_TYPE_NOT_EXISTS);
 		}

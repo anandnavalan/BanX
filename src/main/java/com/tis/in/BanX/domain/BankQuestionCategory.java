@@ -1,6 +1,7 @@
 package com.tis.in.BanX.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -30,6 +31,9 @@ public class BankQuestionCategory {
 
 	@Column(name = "bank_question_category_minutes")
 	private int bankQuestionCategoryMinutes;
+
+	@Embedded
+	private AuditInfo auditInfo;
 
 	public long getBankQuestionCategoryId() {
 		return bankQuestionCategoryId;
@@ -77,6 +81,14 @@ public class BankQuestionCategory {
 
 	public void setBankQuestionCategoryMinutes(int bankQuestionCategoryMinutes) {
 		this.bankQuestionCategoryMinutes = bankQuestionCategoryMinutes;
+	}
+
+	public AuditInfo getAuditInfo() {
+		return auditInfo;
+	}
+
+	public void setAuditInfo(AuditInfo auditInfo) {
+		this.auditInfo = auditInfo;
 	}
 
 }

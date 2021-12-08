@@ -12,7 +12,7 @@ import com.tis.in.BanX.domain.BankExam;
 @Repository
 public interface BankExamRepository extends JpaRepository<BankExam, Long> {
 	Optional<BankExam> findByBankExamId(long bankExamid);
+
 	Optional<BankExam> findByBankExamName(String bankExamName);
-	
 
 }

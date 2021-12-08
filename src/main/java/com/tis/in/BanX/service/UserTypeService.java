@@ -18,6 +18,14 @@ public class UserTypeService {
 	UserTypeRepository userTypeRepository;
 
 	public UserType addOrUpdateUserType(UserType userType) {
+		AuditInfo auditInfo = new AuditInfo();
+
+		auditInfo.setCreatedBy("system");
+		auditInfo.setCreatedDate(Utility.getSQLDate());
+		auditInfo.setModifiedBy("system");
+		auditInfo.setModifiedDate(Utility.getSQLDate());
+
+		userType.setAuditInfo(auditInfo);
 		return userTypeRepository.save(userType);
 	}
 
