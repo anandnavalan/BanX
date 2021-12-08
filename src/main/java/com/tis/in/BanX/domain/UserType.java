@@ -24,7 +24,7 @@ public class UserType {
 
 	@Embedded
 	private AuditInfo auditInfo;
-	
+
 	public long getUserTypeId() {
 		return userTypeId;
 	}
@@ -48,5 +48,4 @@ public class UserType {
 	public void setAuditInfo(AuditInfo auditInfo) {
 		this.auditInfo = auditInfo;
 	}
-	
 }

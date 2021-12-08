@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "q_student_qualification")
@@ -23,10 +24,12 @@ public class StudentQualification {
 
 	@Column(name = "qualification_name")
 	@NotBlank(message = "QUALIFICATION_NAME_NOT_BLANK")
+	@Size(min = 2, max = 255, message = "QUALIFICATION_NAME_SIZE_CRITERIA_ERROR")
 	private String qualificationName;
 
 	@Column(name = "qualification_institute")
 	@NotBlank(message = "QUALIFICATION_INSTITUDE_NOT_BLANK")
+	@Size(min = 2, max = 255, message = "QUALIFICATION_INSTITUDE_SIZE_CRITERIA_ERROR")
 	private String qualificationInstitute;
 
 	@Column(name = "qualification_percentage")

@@ -13,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
 @Entity
@@ -28,16 +29,16 @@ public class StudentUser {
 	private long userId;
 
 	@Column(name = "student_first_name")
-	@NotBlank(message = "studentFirstName is mandatory")
-	@Size(min = 2, max = 255, message = "Student FirstName should be minimum of 2 chars and maximum of 255 chars")
+	@NotBlank(message = "STUDENT_FIRSTNAME_NOT_BLANK")
+	@Size(min = 2, max = 255, message = "STUDENT_FIRSTNAME_SIZE_CRITERIA_ERROR")
 	private String studentFirstName;
 
 	@Column(name = "student_middle_name")
-	@Size(min = 2, max = 255, message = "Student MiddleName should be minimum of 2 chars and maximum of 255 chars")
 	private String studentMiddleName;
 
 	@Column(name = "student_last_name")
-	@Size(min = 2, max = 255, message = "Student LastName should be minimum of 2 chars and maximum of 255 chars")
+	@NotBlank(message = "STUDENT_LASTNAME_NOT_BLANK")
+	@Size(min = 2, max = 255, message = "STUDENT_LASTNAME_SIZE_CRITERIA_ERROR")
 	private String studentLastName;
 
 	@Column(name = "student_address")
@@ -50,7 +51,7 @@ public class StudentUser {
 	private String studentState;
 
 	@Column(name = "student_pincode")
-	@Range(min = 0, max = 1000000, message = "Student PinCode should be Valid")
+	@Range(min = 0, max = 1000000, message = "STUDENT_PINCODE_SIZE_CRITERIA_ERROR")
 	private long studentPincode;
 
 	@Column(name = "student_aadhar")
@@ -60,7 +61,8 @@ public class StudentUser {
 	private String studentAlternateMobile;
 
 	@Column(name = "student_father_name")
-	@Size(min = 2, max = 255, message = "Student FatherName should be minimum of 2 chars and maximum of 255 chars")
+	@NotBlank(message = "STUDENT_FATHERNAME_NOT_BLANK")
+	@Size(min = 2, max = 255, message = "STUDENT_FATHERNAME_SIZE_CRITERIA_ERROR")
 	private String studentFatherName;
 
 	@Column(name = "student_father_mobile")
@@ -76,7 +78,7 @@ public class StudentUser {
 	private Date studentJoiningDate;
 
 	@Column(name = "student_dob")
-	@Past(message = "Student DOB should be a Past Date")
+	@Past(message = "STUDENTDOB_SHOULD_BE_PAST")
 	private Date studentDob;
 
 	@Column(name = "student_notes")
