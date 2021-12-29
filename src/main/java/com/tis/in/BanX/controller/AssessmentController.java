@@ -1,5 +1,6 @@
 package com.tis.in.BanX.controller;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,10 +21,12 @@ import com.tis.in.BanX.common.ErrorConstants;
 import com.tis.in.BanX.common.ResponseBuilder;
 import com.tis.in.BanX.common.Utility;
 import com.tis.in.BanX.domain.Assessment;
+import com.tis.in.BanX.domain.Assessment_Select;
 import com.tis.in.BanX.domain.AuditInfo;
 import com.tis.in.BanX.exception.model.ResourceCreationException;
 import com.tis.in.BanX.exception.model.ResourceNotFoundException;
 import com.tis.in.BanX.handler.ResponseHandler;
+import com.tis.in.BanX.model.AssessmentResponse;
 import com.tis.in.BanX.service.AssessmentService;
 
 @RestController
@@ -33,8 +36,8 @@ public class AssessmentController {
 	AssessmentService assessmentService;
 
 	@RequestMapping(value = "/createassessment", name = "CreateAssessment", method = RequestMethod.POST)
-	private ResponseEntity<ResponseBuilder> createAssessment(@RequestBody @Valid Assessment assessment)
-			throws ResourceCreationException {
+	private ResponseEntity<ResponseBuilder> createAssessment(Principal principal,
+			@RequestBody @Valid Assessment assessment) throws ResourceCreationException {
 
 		Optional<Assessment> optionalAssessment = assessmentService.getAssessment(assessment.getAssessmentId());
 
@@ -47,9 +50,9 @@ public class AssessmentController {
 
 			AuditInfo auditInfo = new AuditInfo();
 
-			auditInfo.setCreatedBy("system");
+			auditInfo.setCreatedBy(principal.getName());
 			auditInfo.setCreatedDate(Utility.getSQLDate());
-			auditInfo.setModifiedBy("system");
+			auditInfo.setModifiedBy(principal.getName());
 			auditInfo.setModifiedDate(Utility.getSQLDate());
 
 			assessment.setAuditInfo(auditInfo);
@@ -67,17 +70,17 @@ public class AssessmentController {
 	}
 
 	@RequestMapping(value = "/updateassessment", name = "UpdateAssessment", method = RequestMethod.PUT)
-	private ResponseEntity<ResponseBuilder> updateAssessment(@RequestBody @Valid Assessment assessment)
-			throws ResourceNotFoundException, ResourceCreationException {
+	private ResponseEntity<ResponseBuilder> updateAssessment(Principal principal,
+			@RequestBody @Valid Assessment assessment) throws ResourceNotFoundException, ResourceCreationException {
 		Optional<Assessment> optionalAssessment = assessmentService.getAssessment(assessment.getAssessmentId());
 
 		if (!optionalAssessment.isPresent()) {
 			throw new ResourceCreationException(ErrorConstants.ERROR_ASSESSMENT_NOT_EXISTS);
 		} else {
 			AuditInfo auditInfo = new AuditInfo();
-			auditInfo.setCreatedBy("system");
+			auditInfo.setCreatedBy(principal.getName());
 			auditInfo.setCreatedDate(Utility.getSQLDate());
-			auditInfo.setModifiedBy("system");
+			auditInfo.setModifiedBy(principal.getName());
 			auditInfo.setModifiedDate(Utility.getSQLDate());
 
 			assessment.setAuditInfo(auditInfo);
@@ -100,7 +103,7 @@ public class AssessmentController {
 
 	@GetMapping(value = "/getassessment/{id}", name = "getAssessment")
 	public ResponseEntity<Object> getidAssessmentbyid(@PathVariable long id) {
-		Optional<Assessment> assessment = assessmentService.getAssessment(id);
+		Optional<Assessment_Select> assessment = assessmentService.getAssessmentWithQuestion(id);
 		return ResponseHandler.generateResponse("Assessment Retrieved Successfully", HttpStatus.OK, assessment.get());
 	}
 

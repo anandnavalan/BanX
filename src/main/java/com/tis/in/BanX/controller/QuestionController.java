@@ -1,5 +1,6 @@
 package com.tis.in.BanX.controller;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +26,7 @@ import com.tis.in.BanX.domain.QuestionCategory;
 import com.tis.in.BanX.exception.model.ResourceCreationException;
 import com.tis.in.BanX.exception.model.ResourceNotFoundException;
 import com.tis.in.BanX.handler.ResponseHandler;
+import com.tis.in.BanX.model.QuestionsResponse;
 import com.tis.in.BanX.service.QuestionService;
 
 @RestController
@@ -34,7 +36,8 @@ public class QuestionController {
 	QuestionService questionService;
 
 	@RequestMapping(value = "/createquestion", name = "createQuestion", method = RequestMethod.POST)
-	private ResponseEntity<ResponseBuilder> createQuestion(@RequestBody @Valid Question question)
+	private ResponseEntity<ResponseBuilder> createQuestion(Principal principal,
+			@RequestBody @Valid Question question)
 			throws ResourceCreationException {
 		Optional<Question> optionalQuestion = questionService.getQuestion(question.getQuestionId());
 		if (optionalQuestion.isPresent()) {
@@ -48,9 +51,9 @@ public class QuestionController {
 			} else {
 				AuditInfo auditInfo = new AuditInfo();
 
-				auditInfo.setCreatedBy("system");
+				auditInfo.setCreatedBy(principal.getName());
 				auditInfo.setCreatedDate(Utility.getSQLDate());
-				auditInfo.setModifiedBy("system");
+				auditInfo.setModifiedBy(principal.getName());
 				auditInfo.setModifiedDate(Utility.getSQLDate());
 
 				question.setAuditInfo(auditInfo);
@@ -102,14 +105,15 @@ public class QuestionController {
 	}
 
 	@RequestMapping(value = "/updatequestion", name = "updateQuestion", method = RequestMethod.PUT)
-	private ResponseEntity<ResponseBuilder> updateQuestion(@RequestBody @Valid Question question)
+	private ResponseEntity<ResponseBuilder> updateQuestion(Principal principal,
+			@RequestBody @Valid Question question)
 			throws ResourceNotFoundException {
 		Optional<Question> optionalQuestion = questionService.getQuestion(question.getQuestionId());
 		if (optionalQuestion.isPresent()) {
 			AuditInfo auditInfo = new AuditInfo();
-			auditInfo.setCreatedBy("system");
+			auditInfo.setCreatedBy(principal.getName());
 			auditInfo.setCreatedDate(Utility.getSQLDate());
-			auditInfo.setModifiedBy("system");
+			auditInfo.setModifiedBy(principal.getName());
 			auditInfo.setModifiedDate(Utility.getSQLDate());
 
 			question.setAuditInfo(auditInfo);
@@ -125,12 +129,19 @@ public class QuestionController {
 		}
 	}
 
-	@RequestMapping(value = "/getquestions", name = "getQuestion", method = RequestMethod.GET)
+	@RequestMapping(value = "/getquestions", name = "getQuestions", method = RequestMethod.GET)
 	public ResponseEntity<Object> getQuestion() {
 		List<Question> question = questionService.getAllQuestion();
 		return ResponseHandler.generateResponse("Question Retrieved Successfully", HttpStatus.OK, question);
 	}
 
+	@RequestMapping(value = "/v2/getquestions", name = "getQuestions", method = RequestMethod.GET)
+	public ResponseEntity<Object> getQuestions() {
+		List<QuestionsResponse> question = questionService.getAllQuestions();
+		return ResponseHandler.generateResponse("Question Retrieved Successfully", HttpStatus.OK, question);
+	}
+
+	
 	@GetMapping(value = "/getquestion/{id}", name = "getQuestion")
 	public ResponseEntity<Object> getidQuestionbyid(@PathVariable long id) {
 		Optional<Question> question = questionService.getQuestion(id);

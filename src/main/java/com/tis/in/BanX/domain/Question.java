@@ -1,23 +1,15 @@
- package com.tis.in.BanX.domain;
+package com.tis.in.BanX.domain;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.GroupSequence;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "q_question")
@@ -36,6 +28,10 @@ public class Question {
 	@Column(name = "question_subcategory_id")
 	@Min(value = 0, message = "QUESTION_SUBCATEGORY_ID_NOT_VALID")
 	private Long questionSubCategoryId;
+
+	@Column(name = "question_type_id")
+	@Min(value = 0, message = "QUESTION_TYPE_ID_NOT_VALID")
+	private Long questionTypeId;
 
 	@Column(name = "question_sequence_no")
 	private Long questionSequenceNo;
@@ -78,6 +74,12 @@ public class Question {
 	@Column(name = "question_notes")
 	private String questionNotes;
 
+	@Column(name = "question_references")
+	private String questionReferences;
+
+	@Column(name = "question_rating")
+	private Integer questionRating;
+
 	@Column(name = "question_status")
 	private Long questionStatus;
 
@@ -108,6 +110,14 @@ public class Question {
 		this.questionSubCategoryId = questionSubCategoryId;
 	}
 
+	public Long getQuestionTypeId() {
+		return questionTypeId;
+	}
+
+	public void setQuestionTypeId(Long questionTypeId) {
+		this.questionTypeId = questionTypeId;
+	}
+
 	public Long getQuestionSequenceNo() {
 		return questionSequenceNo;
 	}
@@ -116,12 +126,12 @@ public class Question {
 		this.questionSequenceNo = questionSequenceNo;
 	}
 
-	public String getQuestion() {
+	public String getQuestionName() {
 		return questionName;
 	}
 
-	public void setQuestion(String question) {
-		this.questionName = question;
+	public void setQuestionName(String questionName) {
+		this.questionName = questionName;
 	}
 
 	public String getQuestionOptionA() {
@@ -186,6 +196,22 @@ public class Question {
 
 	public void setQuestionNotes(String questionNotes) {
 		this.questionNotes = questionNotes;
+	}
+
+	public String getQuestionReferences() {
+		return questionReferences;
+	}
+
+	public void setQuestionReferences(String questionReferences) {
+		this.questionReferences = questionReferences;
+	}
+
+	public Integer getQuestionRating() {
+		return questionRating;
+	}
+
+	public void setQuestionRating(Integer questionRating) {
+		this.questionRating = questionRating;
 	}
 
 	public Long getQuestionStatus() {

@@ -19,15 +19,17 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "q_assessment_question")
-public class AssessmentQuestion {
+public class AssessmentQuestion_Select {
 
 	@Id
 	@Column(name = "assessment_question_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long assessmentQuestionId;
 
-	@Column(name = "question_id")
-	private long questionId;
+	@OneToOne
+	@NotFound(action = NotFoundAction.IGNORE)
+	@JoinColumn(name = "question_id", referencedColumnName = "question_id", nullable = false, insertable = true, foreignKey = @javax.persistence.ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+	private Question question;
 
 	@Column(name = "user_answer")
 	private String userAnswer;
@@ -47,7 +49,7 @@ public class AssessmentQuestion {
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "assessment_id", nullable = false)
 	@JsonBackReference
-	private Assessment assessment;
+	private Assessment_Select assessment;
 
 	public long getAssessmentQuestionId() {
 		return assessmentQuestionId;
@@ -57,12 +59,12 @@ public class AssessmentQuestion {
 		this.assessmentQuestionId = assessmentQuestionId;
 	}
 
-	public long getQuestionId() {
-		return questionId;
+	public Question getQuestion() {
+		return question;
 	}
 
-	public void setQuestionId(long questionId) {
-		this.questionId = questionId;
+	public void setQuestion(Question question) {
+		this.question = question;
 	}
 
 	public String getUserAnswer() {
@@ -105,19 +107,12 @@ public class AssessmentQuestion {
 		this.status = status;
 	}
 
-	public Assessment getAssessment() {
+	public Assessment_Select getAssessment() {
 		return assessment;
 	}
 
-	public void setAssessment(Assessment assessment) {
+	public void setAssessment(Assessment_Select assessment) {
 		this.assessment = assessment;
-	}
-
-	@Override
-	public String toString() {
-		return "AssessmentQuestion [assessmentQuestionId=" + assessmentQuestionId + ", questionId=" + questionId
-				+ ", userAnswer=" + userAnswer + ", correctAnswer=" + correctAnswer + ", isAnswered=" + isAnswered
-				+ ", isAnsweredCorrectly=" + isAnsweredCorrectly + ", status=" + status + "]";
 	}
 
 }
