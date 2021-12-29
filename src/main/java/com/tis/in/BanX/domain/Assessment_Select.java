@@ -1,7 +1,6 @@
 package com.tis.in.BanX.domain;
 
 import java.util.Date;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -13,13 +12,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "q_assessment")
-public class Assessment {
+public class Assessment_Select {
 
 	@Id
 	@Column(name = "assessment_id")
@@ -46,7 +48,8 @@ public class Assessment {
 
 	@OneToMany(mappedBy = "assessment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JsonManagedReference
-	private Set<AssessmentQuestion> assessmentQuestions;
+	@OrderBy(value = "assessmentQuestionId")
+	private Set<AssessmentQuestion_Select> assessmentQuestions;
 
 	@Embedded
 	private AuditInfo auditInfo;
@@ -107,13 +110,14 @@ public class Assessment {
 		this.status = status;
 	}
 
-	public Set<AssessmentQuestion> getAssessmentQuestions() {
+	public Set<AssessmentQuestion_Select> getAssessmentQuestions() {
 		return assessmentQuestions;
 	}
 
-	public void setAssessmentQuestions(LinkedHashSet<AssessmentQuestion> assessmentQuestions) {
+	public void setAssessmentQuestions(Set<AssessmentQuestion_Select> assessmentQuestions) {
 		this.assessmentQuestions = assessmentQuestions;
-		for (AssessmentQuestion assessmentQuestion : assessmentQuestions) {
+
+		for (AssessmentQuestion_Select assessmentQuestion : assessmentQuestions) {
 			assessmentQuestion.setAssessment(this);
 		}
 	}
@@ -124,13 +128,6 @@ public class Assessment {
 
 	public void setAuditInfo(AuditInfo auditInfo) {
 		this.auditInfo = auditInfo;
-	}
-
-	@Override
-	public String toString() {
-		return "Assessment [assessmentId=" + assessmentId + ", bankExamId=" + bankExamId + ", userId=" + userId
-				+ ", assesmentDate=" + assesmentDate + ", startDate=" + startDate + ", endDate=" + endDate + ", status="
-				+ status + ", assessmentQuestions=" + assessmentQuestions + ", auditInfo=" + auditInfo + "]";
 	}
 
 }

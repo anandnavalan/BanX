@@ -11,7 +11,7 @@ import com.tis.in.BanX.domain.QuestionCategory;
 @Repository
 public interface QuestionCategoryRepository extends JpaRepository<QuestionCategory, Long> {
 
-	
 	Optional<QuestionCategory> findByQuestionCategoryId(long questionCategoryid);
+	
 	Optional<QuestionCategory> findByQuestionCategoryName(String questionCategoryName);
 }

@@ -102,4 +102,5 @@ public class User {
 	public void setAuditInfo(AuditInfo auditInfo) {
 		this.auditInfo = auditInfo;
 	}
+
 }

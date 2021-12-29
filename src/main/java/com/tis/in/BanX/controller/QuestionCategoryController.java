@@ -1,5 +1,6 @@
 package com.tis.in.BanX.controller;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +21,6 @@ import com.tis.in.BanX.common.ErrorConstants;
 import com.tis.in.BanX.common.ResponseBuilder;
 import com.tis.in.BanX.common.Utility;
 import com.tis.in.BanX.domain.AuditInfo;
-import com.tis.in.BanX.domain.BankExam;
 import com.tis.in.BanX.domain.QuestionCategory;
 import com.tis.in.BanX.exception.model.ResourceCreationException;
 import com.tis.in.BanX.exception.model.ResourceNotFoundException;
@@ -31,21 +31,21 @@ import com.tis.in.BanX.service.QuestionCategoryService;
 public class QuestionCategoryController {
 
 	@Autowired
-	QuestionCategoryService questionCategoryService;
+	private QuestionCategoryService questionCategoryService;
 
 	@RequestMapping(value = "/createquestioncategory", name = "createQuestionCategory", method = RequestMethod.POST)
-	private ResponseEntity<ResponseBuilder> createQuestionCategory(
+	private ResponseEntity<ResponseBuilder> createQuestionCategory(Principal principal,
 			@RequestBody @Valid QuestionCategory questionCategory) throws ResourceCreationException {
 		Optional<QuestionCategory> optionalQuestionCategory = questionCategoryService
-				.getQuestionCategory(questionCategory.getQuestionCategoryName());
+				.getQuestionCategory(questionCategory.getQuestionCategoryName().trim());
 		if (optionalQuestionCategory.isPresent()) {
 			throw new ResourceCreationException(ErrorConstants.ERROR_QUESTION_CATEGORY_EXISTS);
 		} else {
 			AuditInfo auditInfo = new AuditInfo();
 
-			auditInfo.setCreatedBy("system");
+			auditInfo.setCreatedBy(principal.getName());
 			auditInfo.setCreatedDate(Utility.getSQLDate());
-			auditInfo.setModifiedBy("system");
+			auditInfo.setModifiedBy(principal.getName());
 			auditInfo.setModifiedDate(Utility.getSQLDate());
 
 			questionCategory.setAuditInfo(auditInfo);
@@ -62,25 +62,50 @@ public class QuestionCategoryController {
 	}
 
 	@RequestMapping(value = "/updatequestioncategory", name = "updateQuestionCategory", method = RequestMethod.PUT)
-	private ResponseEntity<ResponseBuilder> updateQuestionCategory(@RequestBody @Valid QuestionCategory questionCategory) throws ResourceNotFoundException {
+	private ResponseEntity<ResponseBuilder> updateQuestionCategory(Principal principal,
+			@RequestBody @Valid QuestionCategory questionCategory)
+			throws ResourceNotFoundException, ResourceCreationException {
+
+		System.out.println(questionCategory.getQuestionCategoryId());
 		Optional<QuestionCategory> optionalQuestionCategory = questionCategoryService
 				.getQuestionCategory(questionCategory.getQuestionCategoryId());
+
 		if (optionalQuestionCategory.isPresent()) {
-			AuditInfo auditInfo = new AuditInfo();
-			auditInfo.setModifiedBy("system");
-			auditInfo.setModifiedDate(Utility.getSQLDate());
 
-			questionCategory.setAuditInfo(auditInfo);
-			questionCategory = questionCategoryService.addOrUpdateQuestionCategory(questionCategory);
+			if (!optionalQuestionCategory.get().getQuestionCategoryName()
+					.equals(questionCategory.getQuestionCategoryName().trim())) {
+				Optional<QuestionCategory> optionalQuestionCategoryName = questionCategoryService
+						.getQuestionCategory(questionCategory.getQuestionCategoryName().trim());
 
-			ResponseBuilder builder = Utility.responseBuilder(
-					Utility.getLocalizedMessage(CommonMessageConstants.SUCCESS_QUESTION_CATEGORY_UPDATION),
-					HttpStatus.CREATED.value());
+				if (optionalQuestionCategoryName.isPresent()) {
+					throw new ResourceCreationException(ErrorConstants.ERROR_QUESTION_CATEGORY_EXISTS);
+				} else {
+					return addOrUpdateQuestionCategory(principal, optionalQuestionCategory, questionCategory);
+				}
+			} else {
+				return addOrUpdateQuestionCategory(principal, optionalQuestionCategory, questionCategory);
+			}
 
-			return new ResponseEntity<>(builder, HttpStatus.CREATED);
 		} else {
 			throw new ResourceNotFoundException(ErrorConstants.ERROR_QUESTION_CATEGORY_NOT_EXISTS);
 		}
+
+	}
+
+	private ResponseEntity<ResponseBuilder> addOrUpdateQuestionCategory(Principal principal,
+			Optional<QuestionCategory> optionalQuestionCategory, QuestionCategory questionCategory) {
+		AuditInfo auditInfo = optionalQuestionCategory.get().getAuditInfo();
+		auditInfo.setModifiedBy(principal.getName());
+		auditInfo.setModifiedDate(Utility.getSQLDate());
+
+		questionCategory.setAuditInfo(auditInfo);
+		questionCategory = questionCategoryService.addOrUpdateQuestionCategory(questionCategory);
+		ResponseBuilder builder = Utility.responseBuilder(
+				Utility.getLocalizedMessage(CommonMessageConstants.SUCCESS_QUESTION_CATEGORY_UPDATION),
+				HttpStatus.CREATED.value());
+
+		return new ResponseEntity<>(builder, HttpStatus.CREATED);
+
 	}
 
 	@RequestMapping(value = "/getquestioncategories", name = "getquestioncategories", method = RequestMethod.GET)
@@ -97,5 +122,6 @@ public class QuestionCategoryController {
 		return ResponseHandler.generateResponse("QuestionCategory Retrieved Successfully", HttpStatus.OK,
 				questionCategory.get());
 	}
+
 
 }

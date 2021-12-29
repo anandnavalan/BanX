@@ -11,6 +11,7 @@ import com.tis.in.BanX.domain.Assessment;
 public interface AssessmentRepository extends JpaRepository<Assessment, Long> {
 
 	Optional<Assessment> findByAssessmentId(long id);
+
 	Optional<Assessment> findByBankExamIdAndUserId(long bankExamId, long userId);
 
 }
