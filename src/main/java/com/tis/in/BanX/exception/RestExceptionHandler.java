@@ -23,6 +23,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -114,7 +116,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
      * @param ex the ConstraintViolationException
      * @return the ServiceError object
      */
-	@ExceptionHandler(javax.validation.ConstraintViolationException.class)
+	@ExceptionHandler({javax.validation.ConstraintViolationException.class, ValidationsFatalException.class})
 	protected ResponseEntity<Object> handleConstraintViolation(javax.validation.ConstraintViolationException ex, HttpServletRequest request) {
 		ServiceError serviceError = new ServiceError(HttpStatus.BAD_REQUEST);
 		populateServiceErrorWithCodeAndMessage( ExceptionConstants.VALIDATION_ERROR, serviceError);
@@ -137,7 +139,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		populateServiceErrorWithCodeAndMessage( ExceptionConstants.MALFUNCTIONED_JSON, serviceError);
         return buildResponseEntity(serviceError);
     }
-
+    
     /**
      * Handle HttpRequestMethodNotSupportedException.
      *
