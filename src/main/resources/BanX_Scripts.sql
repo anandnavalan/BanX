@@ -205,11 +205,25 @@ CREATE TABLE q_question (
 
 ALTER TABLE q_question  ALTER COLUMN question_name VARCHAR(1048576);
 ALTER TABLE q_question  ALTER COLUMN question_notes VARCHAR(1048576);
+ALTER TABLE q_question ALTER COLUMN question_image_path VARCHAR(255);
+ALTER TABLE q_question  ADD COLUMN question_id INT(50) PRIMARY KEY AUTO_INCREMENT;
 
 ALTER TABLE q_question ADD question_type_id INT(50);
 ALTER TABLE q_question ADD question_references VARCHAR(1048576);
 ALTER TABLE q_question ADD question_rating INT(2);
+ALTER TABLE q_question ADD question_image_name VARCHAR(255);
+ALTER TABLE q_question ALTER COLUMN question_phrase VARCHAR(1048576);
 ALTER TABLE q_question ADD FOREIGN KEY (question_type_id) REFERENCES q_question_type(question_type_id);
+
+ALTER TABLE q_question
+DROP COLUMN question_image_name;
+
+ALTER TABLE q_question
+DROP COLUMN question_image_path;
+
+ALTER TABLE q_question
+DROP COLUMN question_id;
+
 
 insert into q_question (question_category_id, question_subcategory_id, question_sequence_no, question_name, 
   question_option_a, question_option_b, question_option_c, question_option_d, 
@@ -351,3 +365,16 @@ CREATE TABLE q_question_filter(
 
 INSERT INTO q_question_filter(question_filter_id,question_category_id,question_sub_category_id, question_filter_name,question_filter_description, created_by, created_date, modified_by, modified_date)
 values('1','1','1','QuestionFilter1','questionfilter','admin', current_timestamp(), 'admin', current_timestamp());
+
+create sequence q_question_images_sequence 
+start with 1 increment by 1 minvalue 1;
+
+
+
+CREATE TABLE q_question_images(
+ question_image_id INT(50) PRIMARY KEY AUTO_INCREMENT,
+ question_id INT(50) NOT NULL,
+ question_image_name VARCHAR(255),
+ question_image_path VARCHAR(255),
+ FOREIGN KEY (question_id) REFERENCES q_question(question_id)
+);

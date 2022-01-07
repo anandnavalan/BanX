@@ -1,15 +1,25 @@
 package com.tis.in.BanX.domain;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.GroupSequence;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "q_question")
@@ -23,18 +33,24 @@ public class Question {
 
 	@Column(name = "question_category_id")
 	@Min(value = 0, message = "QUESTION_CATEGORY_ID_NOT_VALID")
+	@NotNull
 	private Long questionCategoryId;
 
 	@Column(name = "question_subcategory_id")
 	@Min(value = 0, message = "QUESTION_SUBCATEGORY_ID_NOT_VALID")
+	@NotNull
 	private Long questionSubCategoryId;
 
 	@Column(name = "question_type_id")
 	@Min(value = 0, message = "QUESTION_TYPE_ID_NOT_VALID")
+	@NotNull
 	private Long questionTypeId;
 
 	@Column(name = "question_sequence_no")
 	private Long questionSequenceNo;
+
+	@Column(name = "question_phrase")
+	private String questionPhrase;
 
 	@Column(name = "question_name")
 	@NotBlank(message = "QUESTION_NAME_NOT_BLANK")
@@ -83,6 +99,10 @@ public class Question {
 	@Column(name = "question_status")
 	private Long questionStatus;
 
+	@OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JsonManagedReference
+	private Set<QuestionImage> questionImages;
+
 	@Embedded
 	private AuditInfo auditInfo;
 
@@ -124,6 +144,14 @@ public class Question {
 
 	public void setQuestionSequenceNo(Long questionSequenceNo) {
 		this.questionSequenceNo = questionSequenceNo;
+	}
+
+	public String getQuestionPhrase() {
+		return questionPhrase;
+	}
+
+	public void setQuestionPhrase(String questionPhrase) {
+		this.questionPhrase = questionPhrase;
 	}
 
 	public String getQuestionName() {
@@ -220,6 +248,17 @@ public class Question {
 
 	public void setQuestionStatus(Long questionStatus) {
 		this.questionStatus = questionStatus;
+	}
+
+	public Set<QuestionImage> getQuestionImages() {
+		return questionImages;
+	}
+
+	public void setQuestionImages(Set<QuestionImage> questionImages) {
+		this.questionImages = questionImages;
+		for (QuestionImage questionImage : questionImages) {
+			questionImage.setQuestion(this);
+		}
 	}
 
 	public AuditInfo getAuditInfo() {
